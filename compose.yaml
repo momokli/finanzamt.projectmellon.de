@@ -1,0 +1,17 @@
+services:
+  flask:
+    build: .
+    container_name: support-flask
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5003:5000"
+    environment:
+      AUTH_USER: ${AUTH_USER:-admin}
+      AUTH_PASS: ${AUTH_PASS:-change-me}
+      KOFI_WEBHOOK_SECRET: ${KOFI_WEBHOOK_SECRET:-}
+    volumes:
+      - ./data.json:/data/data.json
+    logging:
+      driver: journald
+      options:
+        tag: support

@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>Projekt Mellon — Schatzkammer</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Literata:wght@500;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fff8f0",
+                        "on-primary-fixed": "#2a170f",
+                        "background": "#fff8f0",
+                        "on-primary-fixed-variant": "#5a4137",
+                        "secondary-container": "#f7dec6",
+                        "surface-variant": "#f1e1b9",
+                        "surface-container-highest": "#f1e1b9",
+                        "on-surface-variant": "#504440",
+                        "surface-tint": "#74584e",
+                        "primary": "#090100",
+                        "tertiary-fixed": "#f4dfcb",
+                        "on-tertiary-fixed-variant": "#524436",
+                        "outline-variant": "#d3c3be",
+                        "on-secondary-container": "#73614e",
+                        "on-secondary-fixed-variant": "#544432",
+                        "surface-container-high": "#f7e7bf",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#fff0ca",
+                        "primary-fixed-dim": "#e3bfb2",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#9e7e73",
+                        "on-background": "#221b03",
+                        "on-tertiary-container": "#938271",
+                        "inverse-surface": "#383014",
+                        "secondary-fixed": "#f7dec6",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#d7c3b0",
+                        "surface-dim": "#e9d9b1",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "tertiary-container": "#261b0f",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#241a0d",
+                        "primary-fixed": "#ffdbce",
+                        "on-secondary-fixed": "#26190a",
+                        "inverse-primary": "#e3bfb2",
+                        "outline": "#827470",
+                        "primary-container": "#2c1810",
+                        "surface-bright": "#fff8f0",
+                        "secondary": "#6d5b48",
+                        "surface-container": "#fdedc4",
+                        "surface-container-low": "#fff3d7",
+                        "on-surface": "#221b03",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#dac2ab",
+                        "tertiary": "#060200"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "ledger-line": "32px",
+                        "gutter": "24px",
+                        "margin": "32px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Source Serif 4"],
+                        "body-lg": ["Source Serif 4"],
+                        "number-display": ["Literata"],
+                        "headline-lg": ["Bricolage Grotesque"],
+                        "caption": ["Literata"],
+                        "headline-md": ["Bricolage Grotesque"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "number-display": ["22px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "headline-lg": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fff8f0;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(116, 88, 78, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(116, 88, 78, 0.05) 0px, transparent 50%);
+            min-height: 100vh;
+        }
+
+        .receipt-container {
+            max-width: 450px;
+            margin: 0 auto;
+            background-color: #fff8f0;
+            padding: 32px 24px;
+            position: relative;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+
+        .squiggle-divider {
+            height: 12px;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='12' viewBox='0 0 100 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 6C5 6 5 2 10 2C15 2 15 10 20 10C25 10 25 2 30 2C35 2 35 10 40 10C45 10 45 2 50 2C55 2 55 10 60 10C65 10 65 2 70 2C75 2 75 10 80 10C85 10 85 2 90 2C95 2 95 6 100 6' stroke='%23090100' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+            margin: 32px 0;
+            opacity: 0.8;
+        }
+
+        .ink-box {
+            border: 2px solid #090100;
+            padding: 8px;
+            transition: all 0.15s ease;
+        }
+        .ink-box:active {
+            transform: scale(0.98);
+            background-color: rgba(140, 123, 106, 0.1);
+        }
+
+        .dotted-line {
+            border-bottom: 1px dotted #504440;
+            flex-grow: 1;
+            margin: 0 8px;
+            position: relative;
+            top: -4px;
+        }
+
+        .stamp-approved {
+            border: 3px double #ba1a1a;
+            color: #ba1a1a;
+            padding: 4px 12px;
+            display: inline-block;
+            transform: rotate(-8deg);
+            font-weight: 800;
+            opacity: 0.7;
+            user-select: none;
+            mix-blend-mode: multiply;
+        }
+
+        .stamp-pending {
+            border: 3px double #827470;
+            color: #827470;
+            padding: 4px 12px;
+            display: inline-block;
+            transform: rotate(-5deg);
+            font-weight: 800;
+            opacity: 0.5;
+            user-select: none;
+        }
+
+        @media (max-width: 640px) {
+            .receipt-container {
+                width: 100%;
+                padding: 24px 16px;
+            }
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface">
+
+<!-- Header -->
+<header class="w-full border-b-2 border-primary/20 flex items-center justify-between px-margin py-4 bg-background">
+    <div class="flex items-center gap-2">
+        <h1 class="font-headline-lg text-headline-lg uppercase tracking-tight text-primary">Projekt Mellon</h1>
+    </div>
+    <div class="text-right">
+        <span class="font-caption text-[10px] uppercase tracking-widest opacity-40">Schatzkammer</span>
+    </div>
+</header>
+
+<main class="receipt-container flex flex-col gap-10">
+
+    <!-- Section: How to Donate -->
+    <section class="bg-surface-variant/30 p-6 border-2 border-primary space-y-6">
+        <h2 class="font-headline-md text-[28px] leading-tight text-center uppercase border-b border-primary/20 pb-4 mb-2 tracking-tight">Unterstützung</h2>
+        <div class="flex flex-col gap-5">
+            <div class="flex items-center justify-center gap-2 font-body-md italic opacity-70 mb-2">
+                <span class="uppercase tracking-widest text-[11px]">monatliches ziel:</span>
+                <span class="font-number-display not-italic text-primary text-[18px]">{{ "%.2f"|format(goal) }}€</span>
+            </div>
+            <div class="grid grid-cols-[auto_1fr_1fr] gap-x-3 gap-y-3 items-center">
+                <div class="col-start-2 text-center font-caption text-[10px] uppercase tracking-widest opacity-70 mb-1">Einmalig</div>
+                <div class="col-start-3 text-center font-caption text-[10px] uppercase tracking-widest opacity-70 mb-1">Monatlich</div>
+
+                <div class="flex items-center font-headline-md text-[18px] uppercase tracking-tighter">Ko‑fi</div>
+                <a href="https://ko-fi.com/projectmellon" class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight no-underline text-on-surface hover:bg-primary/5" style="transform: scale(1) rotate(0deg);">
+                    <span>Spende</span>
+                </a>
+                <a href="https://ko-fi.com/projectmellon" class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight no-underline text-on-surface hover:bg-primary/5" style="transform: scale(1) rotate(0deg);">
+                    <span>Abo</span>
+                </a>
+
+                <div class="flex items-center font-headline-md text-[18px] uppercase tracking-tighter">Bank</div>
+                <div class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight" style="transform: scale(1) rotate(0deg);">
+                    <span>Überweisung</span>
+                </div>
+                <div class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight" style="transform: scale(1) rotate(0deg);">
+                    <span>Dauer</span><span>auftrag</span>
+                </div>
+
+                <div class="flex items-center font-headline-md text-[18px] uppercase tracking-tighter">PayPal</div>
+                <div class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight" style="transform: scale(1) rotate(0deg);">
+                    <span>Spende</span>
+                </div>
+                <div class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight" style="transform: scale(1) rotate(0deg);">
+                    <span>Abo</span>
+                </div>
+            </div>
+            <p class="text-center font-caption text-[10px] opacity-40 uppercase tracking-tight mt-1">
+                Alle Spenden an: <span class="opacity-70">momo@projectmellon.de</span> &nbsp;|&nbsp; IBAN auf Anfrage
+            </p>
+        </div>
+    </section>
+
+    <!-- Section: Year Progress -->
+    <section>
+        <h2 class="font-headline-md text-[28px] border-b-2 border-primary mb-6 pb-2 uppercase tracking-tight">Jahresbilanz {{ year }}</h2>
+        <div class="bg-surface-variant/20 p-5 border border-outline-variant italic space-y-5">
+            <div class="flex justify-between items-center mb-2">
+                <span class="font-number-display text-primary text-[20px]">{{ "%.2f"|format(ytd_received) }}€ / {{ "%.2f"|format(yearly_total) }}€</span>
+            </div>
+            <div class="grid grid-cols-4 gap-3">
+                {% for m in year_months %}
+                    {% if m.state == "funded" %}
+                    <div class="ink-box bg-primary text-surface flex items-center justify-center h-14 font-caption text-[11px] uppercase tracking-widest">
+                        {{ m.label }}
+                    </div>
+                    {% elif m.state == "partial" %}
+                    <div class="ink-box border-primary/30 text-primary flex items-center justify-center h-14 font-caption text-[11px] uppercase tracking-widest relative overflow-hidden">
+                        <div class="absolute inset-y-0 left-0 bg-primary/20" style="width: {{ m.partial_pct }}%"></div>
+                        <span class="relative z-10">{{ m.label }}</span>
+                    </div>
+                    {% else %}
+                    <div class="ink-box border-primary/30 text-primary flex items-center justify-center h-14 font-caption text-[11px] uppercase tracking-widest">
+                        {{ m.label }}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="ink-box border-primary/30 text-primary flex items-center justify-center h-10 font-caption text-[11px] uppercase tracking-widest not-italic w-full mt-2" style="transform: scale(1) rotate(0deg);">
+                {% if balance > 0 %}
+                    Überschuss: {{ "%.2f"|format(balance) }}€ → {{ year|int + 1 }}
+                {% elif balance < 0 %}
+                    Fehlbetrag: {{ "%.2f"|format(balance|abs) }}€
+                {% else %}
+                    Ausgeglichen
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <div class="squiggle-divider"></div>
+
+    <!-- Section: This Month -->
+    <section>
+        <h2 class="font-headline-md text-[28px] border-b-2 border-primary mb-6 pb-2 uppercase tracking-tight">Diesen Monat</h2>
+        <div class="space-y-6">
+            <div class="space-y-4">
+                <h3 class="font-headline-md text-[14px] uppercase tracking-widest opacity-60 mb-2">übersicht</h3>
+                <div class="flex justify-between items-baseline">
+                    <span class="font-body-md text-[17px]">eingegangen von spendern</span>
+                    <div class="dotted-line"></div>
+                    <span class="font-number-display text-[20px]">{{ donation_count }}</span>
+                </div>
+                <div class="flex justify-between items-baseline">
+                    <span class="font-body-md text-[17px]">diesen monat zusammen</span>
+                    <div class="dotted-line"></div>
+                    <span class="font-number-display text-[20px]">{{ "%.2f"|format(received) }}€</span>
+                </div>
+                <div class="flex justify-between items-baseline">
+                    <span class="font-body-md text-[17px]">im schnitt</span>
+                    <div class="dotted-line"></div>
+                    <span class="font-number-display text-[20px]">{{ "%.2f"|format(avg_donation) }}€</span>
+                </div>
+            </div>
+            <div class="space-y-4 mt-6">
+                <h3 class="font-headline-md text-[14px] uppercase tracking-widest opacity-60 mb-2">bilanz</h3>
+                <div class="flex justify-between items-baseline">
+                    <span class="font-body-md text-[17px]">monatliches ziel</span>
+                    <div class="dotted-line"></div>
+                    <span class="font-number-display text-[20px]">{{ "%.2f"|format(goal) }}€</span>
+                </div>
+                <div class="flex justify-between items-baseline">
+                    <span class="font-body-md text-[17px]">
+                        {% if surplus >= 0 %}überschuss{% else %}fehlbetrag{% endif %}
+                    </span>
+                    <div class="dotted-line"></div>
+                    <span class="font-number-display text-[20px] {% if surplus < 0 %}text-error{% endif %}">
+                        {% if surplus >= 0 %}+{% endif %}{{ "%.2f"|format(surplus) }}€
+                    </span>
+                </div>
+                <div class="flex justify-between items-baseline">
+                    <span class="font-body-md text-[17px]">guthaben gesamthand</span>
+                    <div class="dotted-line"></div>
+                    <span class="font-number-display text-[20px] {% if projected < 0 %}text-error{% endif %}">
+                        {{ "%.2f"|format(projected) }}€
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="squiggle-divider"></div>
+
+    <!-- Section: Costs -->
+    <section>
+        <h2 class="font-headline-md text-[28px] border-b-2 border-primary mb-6 pb-2 uppercase tracking-tight">Bedarf &amp; Kosten</h2>
+        <div class="space-y-4">
+            {% set cost_items = [] %}
+            {% for label, amount in data.costs.monthly.items() %}
+                {% set _ = cost_items.append({"label": label, "amount": amount}) %}
+            {% endfor %}
+            {% for label, amount in data.costs.yearly.items() %}
+                {% set _ = cost_items.append({"label": label, "amount": amount / 12.0}) %}
+            {% endfor %}
+
+            {% for item in cost_items %}
+            <div class="flex justify-between items-baseline">
+                <span class="font-body-md text-[18px]">{{ item.label | replace("_", " ") | title }}</span>
+                <div class="dotted-line"></div>
+                <span class="font-number-display text-[20px]">{{ "%.2f"|format(item.amount) }}€</span>
+            </div>
+            {% endfor %}
+            <div class="flex justify-between items-baseline border-t-2 border-primary/30 pt-4 mt-2">
+                <span class="font-body-md text-[18px] font-bold">Gesamt / Monat</span>
+                <div class="dotted-line"></div>
+                <span class="font-number-display text-[22px]">{{ "%.2f"|format(goal) }}€</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stamp -->
+    <div class="flex justify-center mt-6">
+        {% if ytd_pct >= 100 %}
+        <span class="stamp-approved">GEDECKT</span>
+        {% elif pct >= 100 %}
+        <span class="stamp-approved">MONAT GEDECKT</span>
+        {% elif ytd_pct >= 75 %}
+        <span class="stamp-pending">GUT IM SOLL</span>
+        {% else %}
+        <span class="stamp-pending">UNTERSTÜTZUNG BENÖTIGT</span>
+        {% endif %}
+    </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="w-full mt-12 border-t border-dotted border-outline-variant flex flex-col items-center gap-3 py-10 px-margin text-center bg-transparent">
+    <p class="font-headline-md text-[28px] text-primary uppercase tracking-tight">Dankeschön</p>
+    <p class="font-body-md text-[16px] text-on-surface-variant">Vielen Dank an alle {{ total_donors }} Unterstützer!</p>
+    <div class="flex gap-4 mt-3">
+        <a class="font-caption text-caption text-on-surface-variant hover:underline decoration-1" href="#">Impressum</a>
+        <span class="text-on-surface-variant opacity-30">•</span>
+        <a class="font-caption text-caption text-on-surface-variant hover:underline decoration-1" href="#">Datenschutz</a>
+    </div>
+    <p class="mt-6 font-caption text-[10px] opacity-40 uppercase tracking-tighter">Projekt Mellon &copy; support.projectmellon.de</p>
+</footer>
+
+<!-- Ink spots for texture -->
+<script>
+    const createInkSpot = () => {
+        const spot = document.createElement('div');
+        spot.style.position = 'absolute';
+        spot.style.width = Math.random() * 6 + 'px';
+        spot.style.height = Math.random() * 6 + 'px';
+        spot.style.backgroundColor = '#090100';
+        spot.style.opacity = '0.04';
+        spot.style.borderRadius = '50%';
+        spot.style.left = Math.random() * 100 + '%';
+        spot.style.top = Math.random() * 100 + '%';
+        spot.style.pointerEvents = 'none';
+        document.body.appendChild(spot);
+    }
+    for (let i = 0; i < 20; i++) createInkSpot();
+
+    // Click effect for ink boxes
+    document.querySelectorAll('.ink-box').forEach(box => {
+        box.addEventListener('click', function() {
+            this.style.transform = 'scale(0.96) rotate(' + (Math.random() * 2 - 1) + 'deg)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1) rotate(0deg)';
+            }, 100);
+        });
+    });
+</script>
+
+</body>
+</html>

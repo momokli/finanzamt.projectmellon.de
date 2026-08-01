@@ -1,0 +1,119 @@
+---
+- name: Deploy support.projectmellon.de
+  hosts: projectmellon.de
+  vars:
+    cloudflare_zone_id: "70505a13081de0743e8e7fbae48d6611"
+
+  tasks:
+    - name: Ensure base directory exists
+      ansible.builtin.file:
+        path: "{{ support_path }}"
+        state: directory
+        mode: "0755"
+
+    - name: Sync compose.yaml
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../compose.yaml"
+        dest: "{{ support_path }}/compose.yaml"
+        mode: "0644"
+
+    - name: Sync Dockerfile
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../Dockerfile"
+        dest: "{{ support_path }}/Dockerfile"
+        mode: "0644"
+
+    - name: Sync requirements.txt
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../requirements.txt"
+        dest: "{{ support_path }}/requirements.txt"
+        mode: "0644"
+
+    - name: Sync app.py
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../app.py"
+        dest: "{{ support_path }}/app.py"
+        mode: "0644"
+
+    - name: Sync importers
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../importers/"
+        dest: "{{ support_path }}/importers/"
+        mode: "0644"
+
+    - name: Sync templates
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../templates/"
+        dest: "{{ support_path }}/templates/"
+        mode: "0644"
+
+    - name: Sync static
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../static/"
+        dest: "{{ support_path }}/static/"
+        mode: "0644"
+
+    - name: Seed data.json if not present
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../data.json.example"
+        dest: "{{ support_path }}/data.json"
+        mode: "0644"
+        force: false
+
+    - name: Copy .env file
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../.env"
+        dest: "{{ support_path }}/.env"
+        mode: "0600"
+      failed_when: false
+
+    - name: Build and start support container
+      ansible.builtin.command:
+        cmd: docker compose up -d --build
+        chdir: "{{ support_path }}"
+      changed_when: true
+
+    - name: Add Caddy route
+      ansible.builtin.blockinfile:
+        path: /home/momo/Caddyfile
+        marker: "# {mark} SUPPORT ANSIBLE MANAGED"
+        block: |
+          support.projectmellon.de {
+              reverse_proxy 127.0.0.1:5003
+          }
+      register: caddy_changed
+
+    - name: Reload Caddy
+      ansible.builtin.systemd:
+        name: caddy-planet.service
+        state: restarted
+      become: true
+      when: caddy_changed.changed
+
+    - name: Create Cloudflare DNS CNAME record
+      ansible.builtin.uri:
+        url: "https://api.cloudflare.com/client/v4/zones/{{ cloudflare_zone_id }}/dns_records"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ lookup('env', 'CLOUDFLARE_API_TOKEN') }}"
+          Content-Type: application/json
+        body:
+          type: CNAME
+          name: support
+          content: projectmellon.de
+          ttl: 3600
+        body_format: json
+        status_code: [200, 201]
+      register: dns_cname
+      failed_when: false
+
+    - name: Show DNS result
+      ansible.builtin.debug:
+        msg: >
+          {% if dns_cname.status == 409 %}
+          DNS CNAME already exists — OK.
+          {% elif dns_cname.status in [200, 201] %}
+          DNS CNAME created successfully.
+          {% else %}
+          DNS CNAME creation returned {{ dns_cname.status }}. May need manual check.
+          {% endif %}

@@ -1,0 +1,17 @@
+{
+  "costs": {
+    "monthly": {
+      "hetzner_ex44": 63.07,
+      "hetzner_cloud": 29.69,
+      "hetzner_storage": 157.91,
+      "contabo_vps": 0,
+      "usenet_provider": 0
+    },
+    "yearly": {
+      "domains": 0,
+      "usenet_indexer": 0
+    }
+  },
+  "donations": {},
+  "running_balance": 0.00
+}

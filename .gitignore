@@ -1,0 +1,6 @@
+personal_docs/
+.env
+__pycache__/
+_stitch_source/
+*.pyc
+data.json
