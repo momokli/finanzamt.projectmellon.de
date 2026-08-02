@@ -125,10 +125,21 @@ def _ytd_split_stats(donations, year, subscribers, mode):
     else:
         median = (values[n // 2 - 1] + values[n // 2]) / 2
 
+    # Per-person-per-month median (for extra row display)
+    pp_vals = sorted([t / current_month for t in totals.values()])
+    n2 = len(pp_vals)
+    if n2 == 0:
+        pp_median = 0.0
+    elif n2 % 2 == 1:
+        pp_median = pp_vals[n2 // 2]
+    else:
+        pp_median = (pp_vals[n2 // 2 - 1] + pp_vals[n2 // 2]) / 2
+
     return {
         "count": unique_donors,
         "total": total,
         "avg": round(median, 2),
+        "pp_median": round(pp_median, 2),
     }
 
 
@@ -304,6 +315,7 @@ def compute(data):
         "onces_ytd_count": ytd_onces["count"],
         "onces_ytd_total": ytd_onces["total"],
         "onces_ytd_avg": ytd_onces["avg"],
+        "onces_ytd_pp": ytd_onces["pp_median"],
         # Year progress
         "year_months": ymonths,
         "months_funded": months_funded,
