@@ -252,14 +252,14 @@
                             Ko‑fi
                         </div>
                         <a
-                            href="https://ko-fi.com/projectmellon"
+                            href="https://ko-fi.com/momokli"
                             class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight no-underline text-on-surface hover:bg-primary/5"
                             style="transform: scale(1) rotate(0deg)"
                         >
                             <span>Spende</span>
                         </a>
                         <a
-                            href="https://ko-fi.com/projectmellon"
+                            href="https://ko-fi.com/momokli"
                             class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight no-underline text-on-surface hover:bg-primary/5"
                             style="transform: scale(1) rotate(0deg)"
                         >
@@ -271,36 +271,40 @@
                         >
                             Bank
                         </div>
-                        <div
-                            class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight"
+                        <button
+                            onclick="openBankModal(false)"
+                            class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight cursor-pointer"
                             style="transform: scale(1) rotate(0deg)"
                         >
                             <span>Überweisung</span>
-                        </div>
-                        <div
-                            class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight"
+                        </button>
+                        <button
+                            onclick="openBankModal(true)"
+                            class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight cursor-pointer"
                             style="transform: scale(1) rotate(0deg)"
                         >
                             <span>Dauerauftrag</span>
-                        </div>
+                        </button>
 
                         <div
                             class="flex items-center font-headline-md text-[18px] uppercase tracking-tighter"
                         >
                             PayPal
                         </div>
-                        <div
-                            class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight"
+                        <a
+                            href="https://paypal.me/imontouch"
+                            class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight no-underline text-on-surface hover:bg-primary/5"
                             style="transform: scale(1) rotate(0deg)"
                         >
                             <span>Spende</span>
-                        </div>
-                        <div
-                            class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight"
+                        </a>
+                        <a
+                            href="https://paypal.me/imontouch"
+                            class="ink-box flex flex-col items-center justify-center text-center py-2 px-1 text-[10px] uppercase tracking-widest leading-tight no-underline text-on-surface hover:bg-primary/5"
                             style="transform: scale(1) rotate(0deg)"
                         >
                             <span>Abo</span>
-                        </div>
+                        </a>
                     </div>
             </section>
 
@@ -493,6 +497,26 @@
             </section>
         </main>
 
+
+        <!-- Bank Modal -->
+        <div id="bank-modal" class="hidden" style="position:fixed;inset:0;background:rgba(9,1,0,0.4);display:none;align-items:center;justify-content:center;z-index:50" onclick="if(event.target===this)closeBankModal()">
+            <div class="receipt-container" style="max-width:360px;background:#fff8f0;border:2px solid #090100;padding:24px" onclick="event.stopPropagation()">
+                <p class="font-headline-md text-[18px] uppercase tracking-tight mb-4">Bankverbindung</p>
+                <p class="font-caption text-[10px] uppercase tracking-widest opacity-50">Kontoinhaber</p>
+                <p class="font-body-md text-[16px] mb-3">Simon Klimke</p>
+                <p class="font-caption text-[10px] uppercase tracking-widest opacity-50">IBAN</p>
+                <div class="flex gap-2 mb-1">
+                    <code class="font-number-display text-[15px] flex-1">DE75 7603 0080 0230 1113 67</code>
+                    <button onclick="copyIBAN()" class="ink-box px-3 py-1 text-[10px] uppercase tracking-widest cursor-pointer">📋</button>
+                </div>
+                <p class="font-caption text-[10px] opacity-40 mb-4">ING</p>
+                <p id="dauerauftrag-hint" class="hidden font-body-md text-[13px] opacity-60 mb-4 border-t border-dotted border-primary/20 pt-3">
+                    Für einen Dauerauftrag: in deiner Banking‑App als monatliche wiederkehrende Überweisung einrichten.
+                </p>
+                <button onclick="closeBankModal()" class="ink-box w-full py-2 text-[11px] uppercase tracking-widest cursor-pointer">Schließen</button>
+            </div>
+        </div>
+
         <!-- Footer -->
         <footer
             class="w-full mt-12 border-t border-dotted border-outline-variant flex flex-col items-center gap-3 py-10 px-margin text-center bg-transparent"
@@ -547,6 +571,24 @@
                     }, 100);
                 });
             });
+
+            // Bank modal
+            function openBankModal(isDauerauftrag) {
+                const modal = document.getElementById('bank-modal');
+                const hint = document.getElementById('dauerauftrag-hint');
+                modal.style.display = 'flex';
+                modal.classList.remove('hidden');
+                if (isDauerauftrag) hint.classList.remove('hidden');
+                else hint.classList.add('hidden');
+            }
+            function closeBankModal() {
+                const modal = document.getElementById('bank-modal');
+                modal.style.display = 'none';
+                modal.classList.add('hidden');
+            }
+            function copyIBAN() {
+                navigator.clipboard.writeText('DE75760300800230111367');
+            }
         </script>
     </body>
 </html>
