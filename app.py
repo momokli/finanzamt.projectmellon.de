@@ -6,6 +6,7 @@ from pathlib import Path
 
 from flask import Flask, Response, jsonify, redirect, render_template, request, url_for
 
+from calc import compute
 from importers.ing import is_mellon, parse_ing_csv, transaction_key
 from importers.paypal import (
     is_mellon_paypal,
@@ -110,11 +111,20 @@ def admin_dashboard():
     ytd_pct = min(round((ytd_total / ytd_goal) * 100, 1), 100) if ytd_goal > 0 else 100
     running_balance = round(data.get("running_balance", 0), 2)
 
-    # All donors
+    # All donors (this year)
     all_donors = set()
     for d in all_donations:
         if d.get("name"):
             all_donors.add(d["name"])
+
+    # All donors ever
+    all_donors_ever = set()
+    for dons in data.get("donations", {}).values():
+        for d in dons:
+            if d.get("name"):
+                all_donors_ever.add(d["name"])
+
+    subscribers = data.get("subscribers", [])
 
     return render_template(
         "admin.html",
@@ -131,6 +141,8 @@ def admin_dashboard():
             all_donations, key=lambda d: d.get("date", ""), reverse=True
         ),
         donor_count=len(all_donors),
+        subscribers=subscribers,
+        all_donors_ever=sorted(all_donors_ever),
     )
 
 
@@ -264,106 +276,42 @@ def admin_import():
     )
 
 
+@app.route("/admin/subscribers", methods=["POST"])
+@require_auth
+def admin_subscribers():
+    data = load_data()
+    subscribers = set(data.get("subscribers", []))
+
+    name = request.form.get("name", "").strip()
+    action = request.form.get("action", "add")
+
+    if name:
+        if action == "add":
+            subscribers.add(name)
+        elif action == "remove":
+            subscribers.discard(name)
+
+    data["subscribers"] = sorted(subscribers)
+    DATA_FILE.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+    return redirect(url_for("admin_dashboard"))
+
+
 @app.route("/")
 def index():
     data = load_data()
-    goal = monthly_goal(data)
-    mk = current_month_key()
-    received = month_total(data, mk)
-    balance = round(data.get("running_balance", 0), 2)
+    ctx = compute(data)
+    ctx["data"] = data  # template still needs raw costs for some sections
+    return render_template("index.html", **ctx)
 
-    surplus = round(received - goal, 2)
-    projected = round(balance + surplus, 2)
-    pct = min(round((received / goal) * 100, 1), 100) if goal > 0 else 100
 
-    this_month = month_donations(data, mk)
-    donation_count = len(this_month)
-    avg_donation = round(received / donation_count, 2) if donation_count > 0 else 0
+@app.route("/impressum")
+def impressum():
+    return render_template("impressum.html")
 
-    all_names = set()
-    for donations_list in data.get("donations", {}).values():
-        for d in donations_list:
-            if d.get("name"):
-                all_names.add(d["name"])
-    total_donors = len(all_names)
 
-    # year-to-date
-    year = datetime.utcnow().strftime("%Y")
-    ytd_received = 0.0
-    for key, donations_list in data.get("donations", {}).items():
-        if key.startswith(year):
-            ytd_received += sum(d.get("amount", 0) for d in donations_list)
-    ytd_received = round(ytd_received, 2)
-    current_month_num = datetime.utcnow().month
-    ytd_goal = round(goal * current_month_num, 2)
-    yearly_total = round(goal * 12, 2)
-    ytd_pct = (
-        min(round((ytd_received / ytd_goal) * 100, 1), 100) if ytd_goal > 0 else 100
-    )
-
-    # Month-by-month year progress: which months are fully funded?
-    months_funded = int(ytd_received // goal) if goal > 0 else 0
-    if months_funded > 12:
-        months_funded = 12
-    # Partial fill percentage for the next month (if any)
-    month_partial_pct = 0
-    if months_funded < 12 and goal > 0:
-        remainder = ytd_received - (months_funded * goal)
-        month_partial_pct = min(round((remainder / goal) * 100), 100)
-
-    # Build list of 12 month dicts for template
-    month_labels = [
-        "Jan",
-        "Feb",
-        "Mär",
-        "Apr",
-        "Mai",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Okt",
-        "Nov",
-        "Dez",
-    ]
-    year_months = []
-    for i in range(12):
-        m = {
-            "label": month_labels[i],
-            "index": i + 1,
-        }
-        if i < months_funded:
-            m["state"] = "funded"
-        elif i == months_funded and month_partial_pct > 0:
-            m["state"] = "partial"
-            m["partial_pct"] = month_partial_pct
-        elif (i + 1) == current_month_num and months_funded < (i + 1):
-            m["state"] = "current"
-        else:
-            m["state"] = "future"
-        year_months.append(m)
-
-    return render_template(
-        "index.html",
-        data=data,
-        goal=goal,
-        month_key=mk,
-        received=received,
-        surplus=surplus,
-        balance=balance,
-        projected=projected,
-        pct=pct,
-        donation_count=donation_count,
-        avg_donation=avg_donation,
-        total_donors=total_donors,
-        year=year,
-        ytd_received=ytd_received,
-        ytd_goal=ytd_goal,
-        yearly_total=yearly_total,
-        ytd_pct=ytd_pct,
-        year_months=year_months,
-        months_funded=months_funded,
-    )
+@app.route("/datenschutz")
+def datenschutz():
+    return render_template("datenschutz.html")
 
 
 @app.route("/api/kofi-webhook", methods=["POST"])

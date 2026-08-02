@@ -1,8 +1,5 @@
-{% extends "base.html" %}
-
-{% block title %}Admin — {{ year }}{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Admin — {{ year }}{% endblock %} {% block
+content %}
 
 <h2>Admin — {{ year }}</h2>
 
@@ -10,13 +7,19 @@
 <section class="progress-section">
     <div class="progress-header">
         <h3>{{ year }} Progress</h3>
-        <span class="progress-label">{{ "%.2f"|format(ytd_total) }} / {{ "%.2f"|format(ytd_goal) }}&nbsp;€</span>
+        <span class="progress-label"
+            >{{ "%.2f"|format(ytd_total) }} / {{ "%.2f"|format(ytd_goal) }}&nbsp;€</span
+        >
     </div>
     <div class="progress-bar">
-        <div class="progress-fill {{ 'complete' if ytd_pct >= 100 else '' }}" style="width: {{ ytd_pct }}%"></div>
+        <div
+            class="progress-fill {{ 'complete' if ytd_pct >= 100 else '' }}"
+            style="width: {{ ytd_pct }}%"
+        ></div>
     </div>
     <p class="progress-detail">
-        Goal: {{ "%.2f"|format(goal) }} €/mo · Balance: {{ "%.2f"|format(running_balance) }} €
+        Goal: {{ "%.2f"|format(goal) }} €/mo · Balance: {{ "%.2f"|format(running_balance)
+        }} €
     </p>
 </section>
 
@@ -24,20 +27,31 @@
 <section class="stats-section">
     <h3>By Source</h3>
     <table>
-        <thead><tr><th>Source</th><th class="num">Total</th><th class="num">%</th></tr></thead>
+        <thead>
+            <tr>
+                <th>Source</th>
+                <th class="num">Total</th>
+                <th class="num">%</th>
+            </tr>
+        </thead>
         <tbody>
             {% for src, total in source_totals.items() %}
             <tr>
                 <td>{{ src }}</td>
                 <td class="num">{{ "%.2f"|format(total) }}&nbsp;€</td>
-                <td class="num">{{ "%.0f"|format((total / ytd_total) * 100) if ytd_total > 0 else 0 }}%</td>
+                <td class="num">
+                    {{ "%.0f"|format((total / ytd_total) * 100) if ytd_total > 0 else 0
+                    }}%
+                </td>
             </tr>
             {% endfor %}
         </tbody>
         <tfoot>
             <tr>
                 <td><strong>Total</strong></td>
-                <td class="num"><strong>{{ "%.2f"|format(ytd_total) }}&nbsp;€</strong></td>
+                <td class="num">
+                    <strong>{{ "%.2f"|format(ytd_total) }}&nbsp;€</strong>
+                </td>
                 <td class="num"></td>
             </tr>
         </tfoot>
@@ -48,7 +62,13 @@
 <section class="costs-section">
     <h3>Monthly Breakdown</h3>
     <table>
-        <thead><tr><th>Month</th><th class="num">Donations</th><th class="num">Total</th></tr></thead>
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th class="num">Donations</th>
+                <th class="num">Total</th>
+            </tr>
+        </thead>
         <tbody>
             {% for mk, info in monthly_totals.items() %}
             <tr>
@@ -65,7 +85,14 @@
 <section class="donations-section">
     <h3>All Donations — {{ year }} ({{ all_donations|length }})</h3>
     <table>
-        <thead><tr><th>Date</th><th>Name</th><th>Source</th><th class="num">Amount</th></tr></thead>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Source</th>
+                <th class="num">Amount</th>
+            </tr>
+        </thead>
         <tbody>
             {% for d in all_donations %}
             <tr>
@@ -77,6 +104,54 @@
             {% endfor %}
         </tbody>
     </table>
+</section>
+
+<!-- Subscriber Management -->
+<section class="stats-section">
+    <h3>Abos verwalten</h3>
+    <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 1rem">
+        Alle Spenden von markierten Unterstützern zählen als monatliches Abo.
+    </p>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem">
+        {% for name in all_donors_ever %}
+        <form method="post" action="/admin/subscribers" style="display: inline">
+            <input type="hidden" name="name" value="{{ name }}" />
+            {% if name in subscribers %}
+            <input type="hidden" name="action" value="remove" />
+            <button
+                type="submit"
+                style="
+                    background: var(--green);
+                    color: #000;
+                    border: 1px solid var(--border);
+                    border-radius: var(--radius);
+                    padding: 0.3rem 0.7rem;
+                    font-size: 0.85rem;
+                    cursor: pointer;
+                "
+            >
+                ✓ {{ name }}
+            </button>
+            {% else %}
+            <input type="hidden" name="action" value="add" />
+            <button
+                type="submit"
+                style="
+                    background: var(--card);
+                    color: var(--muted);
+                    border: 1px solid var(--border);
+                    border-radius: var(--radius);
+                    padding: 0.3rem 0.7rem;
+                    font-size: 0.85rem;
+                    cursor: pointer;
+                "
+            >
+                {{ name }}
+            </button>
+            {% endif %}
+        </form>
+        {% endfor %}
+    </div>
 </section>
 
 {% endblock %}

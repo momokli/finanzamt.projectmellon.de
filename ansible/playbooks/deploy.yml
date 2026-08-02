@@ -35,6 +35,12 @@
         dest: "{{ support_path }}/app.py"
         mode: "0644"
 
+    - name: Sync calc.py
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../calc.py"
+        dest: "{{ support_path }}/calc.py"
+        mode: "0644"
+
     - name: Sync importers
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/../../importers/"
