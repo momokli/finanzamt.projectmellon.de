@@ -275,6 +275,7 @@ def compute(data):
         "yearly_total": yearly_total(goal),
         "month_key": mk,
         "year": year,
+        "current_month": datetime.utcnow().month,
         "running_balance": running_balance,
         "surplus": surplus,
         "projected": projected,

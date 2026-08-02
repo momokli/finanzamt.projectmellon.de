@@ -374,6 +374,34 @@
                         <h3
                             class="font-headline-md text-[14px] uppercase tracking-widest opacity-60 mb-2"
                         >
+                            Gesamt
+                        </h3>
+                        <div class="flex justify-between items-baseline">
+                            <span class="font-body-md text-[17px]"
+                                >{{ subs_ytd_count + onces_ytd_count }} leute spenden insgesamt</span
+                            >
+                        </div>
+                        <div class="flex justify-between items-baseline">
+                            <span class="font-body-md text-[17px]">zusammen {{ year }}</span>
+                            <div class="dotted-line"></div>
+                            <span class="font-number-display text-[20px]"
+                                >{{ "%.2f"|format(subs_ytd_total + onces_ytd_total) }}€</span
+                            >
+                        </div>
+                        <div class="flex justify-between items-baseline">
+                            <span class="font-body-md text-[17px]"
+                                >pro monat kommen circa</span
+                            >
+                            <div class="dotted-line"></div>
+                            <span class="font-number-display text-[20px]"
+                                >{{ "%.0f"|format(ytd_received / current_month) }} €</span
+                            >
+                        </div>
+                    </div>
+                    <div class="space-y-4 mt-6">
+                        <h3
+                            class="font-headline-md text-[14px] uppercase tracking-widest opacity-60 mb-2"
+                        >
                             Spenden-Abos
                         </h3>
                         <div class="flex justify-between items-baseline">
