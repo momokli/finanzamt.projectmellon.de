@@ -105,15 +105,25 @@ def _ytd_split_stats(donations, year, subscribers, mode):
     unique_donors = len(totals)
     current_month = datetime.utcnow().month
 
-    # Median of per-person per-month contributions
-    per_month = sorted([t / current_month for t in totals.values()])
-    n = len(per_month)
+    # Median: subs = per-person-per-month, onces = per-donation
+    if mode == "subs":
+        values = sorted([t / current_month for t in totals.values()])
+    else:
+        values = []
+        for key, dons in donations.items():
+            if key.startswith(str(year)):
+                _, onces = _split_recurring(dons, subscribers)
+                for d in onces:
+                    values.append(d.get("amount", 0))
+        values.sort()
+
+    n = len(values)
     if n == 0:
         median = 0.0
     elif n % 2 == 1:
-        median = per_month[n // 2]
+        median = values[n // 2]
     else:
-        median = (per_month[n // 2 - 1] + per_month[n // 2]) / 2
+        median = (values[n // 2 - 1] + values[n // 2]) / 2
 
     return {
         "count": unique_donors,
