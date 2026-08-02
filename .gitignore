@@ -4,3 +4,4 @@ __pycache__/
 _stitch_source/
 *.pyc
 data.json
+.DS_Store
