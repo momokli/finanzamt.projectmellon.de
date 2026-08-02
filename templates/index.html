@@ -229,7 +229,7 @@
                         >
                         <div class="dotted-line"></div>
                         <span class="font-number-display text-[20px]"
-                            >{{ "%.0f"|format((subs_ytd_avg + onces_ytd_avg) / 2) }} €</span
+                            >{{ "%.0f"|format(ytd_received / (subs_ytd_count + onces_ytd_count) / current_month) }} €</span
                         >
                     </div>
                     <div
